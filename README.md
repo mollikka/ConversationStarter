@@ -20,3 +20,5 @@ Dialog tree editor for generic game development
 
 Application runs in the browser.
 Implemented in Javascript using jsPlumb 1.6.2.
+
+Requires dom.jsPlumb-1.6.2-min.js to run.

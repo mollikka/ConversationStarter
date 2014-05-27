@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Conversation Starter</title>
+        <!--<link rel="stylesheet" href="style.css">-->
+        <style>
+            .dialog-line {
+                width: 200px;
+                padding: 15px;
+                background-color: green;
+                position: absolute;
+            }
+            
+        </style>
+        <script src="dom.jsPlumb-1.6.2-min.js"></script>
+    </head>
+    <body>
+
+
+        <div id="toolbox">
+            <input type="button" value="Add dialog line" onclick="newNode()"></input>
+            <input type="button" value="Redraw" onclick="redraw()"></input>
+        </div>
+
+
+        <div id="dialog-tree">
+            <div class="dialog-line">
+                <form action=".">
+                  <input type="text" name="line">
+                    <input class="add-response-button" type="button" value="Add response"></input>
+                    <div class="responses"></div>
+                </form>
+            </div>
+        </div>
+
+
+        <script>
+                var curId = 1;
+                var nodetemplate=document.getElementsByClassName("dialog-line")[0].cloneNode(true);
+                var redraw = function() {
+                    jsPlumb.repaintEverything();
+                }
+
+                var targetOption = {anchor:"Left",
+                                                    maxConnections:-1, 
+                                                    isSource:false, 
+                                                    isTarget:true, 
+                                                    endpoint:["Dot", {radius:10}], 
+                                                    paintStyle:{fillStyle:"#0000FF"},
+                                                        setDragAllowedWhenFull:true}
+
+                var sourceOption = {anchor:"Right",
+                                                        maxConnections:1, 
+                                                    isSource:true, 
+                                                    isTarget:false, 
+                                                    endpoint:["Dot", {radius:10}], 
+                                                    paintStyle:{fillStyle:"#FF0000"},
+                                                        setDragAllowedWhenFull:true}
+
+
+                var plumber = function(node) {
+                    jsPlumb.draggable(node);
+                    
+                    document.getElementById("dialog-tree").appendChild(node);
+                    jsPlumb.addEndpoint(node, targetOption);
+                    
+                    var myBtn = node.getElementsByClassName('add-response-button')[0];
+                    var resps = node.getElementsByClassName('responses')[0];
+                    myBtn.addEventListener('click', function(event) {
+                        resps.innerHTML += "<input type='text'></input>";
+                        newresponse = resps.lastChild;
+                        node.appendChild(newresponse);
+                        jsPlumb.setId(newresponse, curId); curId++;
+                        jsPlumb.addEndpoint(newresponse,sourceOption);
+                        jsPlumb.repaintEverything();
+                    });
+                }
+
+                var newNode = function() {
+                        var node=nodetemplate.cloneNode(true);
+                        plumber(node);
+                        jsPlumb.setId(node, curId); curId++;
+                }
+
+                jsPlumb.bind("ready", function() {
+                        
+                        
+                        var node=document.getElementsByClassName("dialog-line")[0];
+                        plumber(node);
+                        jsPlumb.setId(node, curId); curId++;
+                        
+                        
+               });
+        </script>
+    </body>
+</html>
+
