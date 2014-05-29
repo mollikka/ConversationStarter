@@ -78,10 +78,13 @@
                 var sourceOption = {anchor:"Right",
                                                         maxConnections:1, 
                                                     isSource:true, 
-                                                    isTarget:false, 
+                                                    isTarget:false,
                                                     endpoint:["Dot", {radius:10}], 
+                                                    connector:[ "Flowchart", { stub:[20, 20], gap:10, cornerRadius:5, alwaysRespectStubs:false }, ],
                                                     paintStyle:{fillStyle:"#FF0000"},
                                                         setDragAllowedWhenFull:true}
+
+
 
 
                 var augmentDialogNode = function(node) {
