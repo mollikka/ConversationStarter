@@ -5,7 +5,13 @@
         <title>Conversation Starter</title>
         <!--<link rel="stylesheet" href="style.css">-->
         <style>
-            .dialog-line {
+            .output-instance {
+                clear: left;
+                padding 16px;
+                border-style: solid;
+                border-width: 5px;
+            }
+            .dialog-node {
                 width: 200px;
                 padding: 15px;
                 background-color: green;
@@ -13,37 +19,38 @@
                 border-style: solid;
                 border-width: 5px;
             }
-            .dialog-line textarea {
+            .line-input {
                 width: 100%;
                 height: 10em;
             }
-            .dialog-line .responses textarea {
-                height: 2em;
+            .resp-input {
+                width: 100%;
+                height: 3em;
             }
         </style>
         <script src="dom.jsPlumb-1.6.2-min.js"></script>
     </head>
     <body>
 
+        <div id="output"></div>
 
         <div id="toolbox">
             <input type="button" value="Add dialog line" onclick="newNode()"></input>
+            <input type="button" value="Save tree" onclick="saveTree()"></input>
         </div>
 
 
         <div id="dialog-tree">
-            <div class="dialog-line">
-                <form action=".">
-                    <textarea></textarea>
-                    <input class="add-response-button" type="button" value="Add response"></input>
-                    <div class="responses"></div>
-                </form>
+            <div class="dialog-node">
+                <textarea class="line-input"></textarea>
+                <input class="add-response-button" type="button" value="Add response"></input>
+                <div class="responses"></div>
             </div>
         </div>
 
 
         <script>
-                var nodetemplate=document.getElementsByClassName("dialog-line")[0].cloneNode(true);
+                var nodetemplate=document.getElementsByClassName("dialog-node")[0].cloneNode(true);
 
                 var targetOption = {anchor:"Left",
                                                     maxConnections:-1, 
@@ -71,7 +78,7 @@
                     var addRespBtn = node.getElementsByClassName('add-response-button')[0];
                     var resps = node.getElementsByClassName('responses')[0];
                     addRespBtn.addEventListener('click', function(event) {
-                        resps.innerHTML += "<textarea></textarea>";
+                        resps.innerHTML += "<textarea class='resp-input'></textarea>";
                         var newResponse = resps.lastChild;
                         resps.appendChild(newResponse);
                         jsPlumb.addEndpoint(newResponse,sourceOption);
@@ -84,8 +91,57 @@
                         augmentDialogNode(node);
                 }
 
+                var saveTree = function() {
+                
+                    var xmlChild = function(newName,parent,value) {
+                        var newElement = document.createElement(newName);
+                        parent.appendChild(newElement);
+                        newElement.innerHTML = value;
+                        return newElement;
+                    }
+                
+                    var getTargetId = function(responseElement, nodes) {
+                        for(var k=0;k<nodes.length;k++){
+                            if (jsPlumb.getConnections({source: responseElement,target: nodes[k]}).length > 0){
+                                return k
+                            }
+                        }
+                        return -1;
+                    
+                    }
+                
+                        var nodes = document.getElementsByClassName('dialog-node');
+                        var xmldata = document.createElement("dialog");
+
+                        for(var i=0;i<nodes.length;i++){
+                            var node = nodes[i];
+                            var lineText = nodes[i].getElementsByClassName("line-input")[0].value;
+                            var responses = nodes[i].getElementsByClassName("responses")[0].getElementsByClassName("resp-input");
+
+                            var nodeXML = xmlChild("message",xmldata,"");
+                            xmlChild("id",nodeXML,i);
+                            xmlChild("line",nodeXML,lineText);
+                            var responsesXML = xmlChild("responses",nodeXML,"");
+
+                            for(var j=0;j<responses.length;j++){
+                                var responseXML = xmlChild("response",responsesXML,"");
+                                var targetId = getTargetId(responses[j],nodes);
+                                xmlChild("target-id",responseXML,targetId);
+                                xmlChild("line",responseXML,responses[j].value);
+                            }
+                        }
+                        var xmlText = new XMLSerializer().serializeToString(xmldata);
+                        var xmlTextNode = document.createTextNode(xmlText);
+                        
+                        var parentDiv = document.getElementById('output');
+                        var xmlTextDiv = document.createElement("div");
+                        xmlTextDiv.setAttribute("class", "output-instance");
+                        xmlTextDiv.appendChild(xmlTextNode);
+                        parentDiv.appendChild(xmlTextDiv);
+                }
+
                 jsPlumb.bind("ready", function() {
-                        var node=document.getElementsByClassName("dialog-line")[0];
+                        var node=document.getElementsByClassName("dialog-node")[0];
                         augmentDialogNode(node);
                });
         </script>
