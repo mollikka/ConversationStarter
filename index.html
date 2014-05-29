@@ -13,12 +13,6 @@
                 border-style: solid;
                 border-width: 5px;
             }
-            .output-instance {
-                clear: left;
-                padding 16px;
-                border-style: solid;
-                border-width: 5px;
-            }
             .dialog-node {
                 width: 200px;
                 padding: 15px;
@@ -42,8 +36,6 @@
         <script src="dom.jsPlumb-1.6.2-min.js"></script>
     </head>
     <body>
-
-        <div id="output"></div>
 
         <div id="toolbox">
             <input type="button" value="Add dialog line" onclick="newNode()"></input>
@@ -177,13 +169,14 @@
                                 }
                             }
                         var xmlText = new XMLSerializer().serializeToString(xmldata);
-                        var xmlTextNode = document.createTextNode(xmlText);
                         
-                        var parentDiv = document.getElementById('output');
-                        var xmlTextDiv = document.createElement("div");
-                        xmlTextDiv.setAttribute("class", "output-instance");
-                        xmlTextDiv.appendChild(xmlTextNode);
-                        parentDiv.appendChild(xmlTextDiv);
+                        var a = window.document.createElement('a');
+                        a.setAttribute('href', 'data:text/xml;charset:utf-8,' + encodeURIComponent(xmlText));
+                        a.setAttribute("download", "conversation");
+
+                        document.body.appendChild(a)
+                        a.click();
+                        document.body.removeChild(a)
                 }
 
                 jsPlumb.bind("ready", function() {
