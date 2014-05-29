@@ -57,6 +57,7 @@
                 Player responds
                 <input class="add-response-button" type="button" value="Add response"></input>
                 <div class="responses"></div>
+                Special event <input type="text" class="event-input"></input>
             </div>
         </div>
 
@@ -150,11 +151,14 @@
                             var actorText = nodes[i].getElementsByClassName("actor-input")[0].value;
                             var lineText = nodes[i].getElementsByClassName("line-input")[0].value;
                             var responses = nodes[i].getElementsByClassName("responses")[0].getElementsByClassName("resp-input");
+                            var eventText = nodes[i].getElementsByClassName("event-input")[0].value;
+
 
                             var nodeXML = xmlChild("message",xmldata,"");
                             xmlChild("id",nodeXML,i);
                             xmlChild("actor",nodeXML,actorText);
                             xmlChild("line",nodeXML,lineText);
+                            xmlChild("event",nodeXML,eventText);
 
                             if (responses.length == 0) {
                                 xmlChild("target-id",nodeXML,getTargetId(node,nodes));
