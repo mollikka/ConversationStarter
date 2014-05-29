@@ -42,7 +42,9 @@
 
         <div id="dialog-tree">
             <div class="dialog-node">
-                <textarea class="line-input"></textarea>
+                Actor <input type="text" class="actor-input"></input>
+                says <textarea class="line-input"></textarea>
+                Player responds
                 <input class="add-response-button" type="button" value="Add response"></input>
                 <div class="responses"></div>
             </div>
@@ -78,8 +80,8 @@
                     var addRespBtn = node.getElementsByClassName('add-response-button')[0];
                     var resps = node.getElementsByClassName('responses')[0];
                     addRespBtn.addEventListener('click', function(event) {
-                        resps.innerHTML += "<textarea class='resp-input'></textarea>";
-                        var newResponse = resps.lastChild;
+                        var newResponse = document.createElement("textarea");
+                        newResponse.setAttribute("class", "resp-input");
                         resps.appendChild(newResponse);
                         jsPlumb.addEndpoint(newResponse,sourceOption);
                         jsPlumb.repaint(node);
@@ -115,11 +117,13 @@
 
                         for(var i=0;i<nodes.length;i++){
                             var node = nodes[i];
+                            var actorText = nodes[i].getElementsByClassName("actor-input")[0].value;
                             var lineText = nodes[i].getElementsByClassName("line-input")[0].value;
                             var responses = nodes[i].getElementsByClassName("responses")[0].getElementsByClassName("resp-input");
 
                             var nodeXML = xmlChild("message",xmldata,"");
                             xmlChild("id",nodeXML,i);
+                            xmlChild("actor",nodeXML,actorText);
                             xmlChild("line",nodeXML,lineText);
                             var responsesXML = xmlChild("responses",nodeXML,"");
 
