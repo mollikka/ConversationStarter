@@ -11,10 +11,10 @@ Dialog tree editor for generic game development
 - Create dialog that branches out, merges or loops based on player choice (directed graphs, really)
 - Export dialog as XML
 - Specify actors for dialog lines
+- Specify special event identifiers that can trigger events in your game
 
 ## Future features
 
-- Dialog ending blocks
 - Manage actors and their portraits and assign actors to dialog lines
 - Set named flags based on player choice and have it affect dialogue later
 - Test/Play conversations before integrating into a game
