@@ -5,6 +5,14 @@
         <title>Conversation Starter</title>
         <!--<link rel="stylesheet" href="style.css">-->
         <style>
+            #root-node {
+                width: 100px;
+                height: 100px;
+                padding: 15px;
+                background-color: #729fcf;
+                border-style: solid;
+                border-width: 5px;
+            }
             .output-instance {
                 clear: left;
                 padding 16px;
@@ -41,6 +49,11 @@
 
 
         <div id="dialog-tree">
+
+            <div id="root-node">
+                Dialog begins
+            </div>
+
             <div class="dialog-node">
                 Actor <input type="text" class="actor-input"></input>
                 says <textarea class="line-input"></textarea>
@@ -102,18 +115,19 @@
                         return newElement;
                     }
                 
-                    var getTargetId = function(responseElement, nodes) {
+                    var getTargetId = function(sourceElement, nodes) {
                         for(var k=0;k<nodes.length;k++){
-                            if (jsPlumb.getConnections({source: responseElement,target: nodes[k]}).length > 0){
+                            if (jsPlumb.getConnections({source: sourceElement,target: nodes[k]}).length > 0){
                                 return k
                             }
                         }
                         return -1;
                     
                     }
-                
+                        var root = document.getElementById('root-node');
                         var nodes = document.getElementsByClassName('dialog-node');
                         var xmldata = document.createElement("dialog");
+                        xmlChild("root",xmldata,getTargetId(root,nodes));
 
                         for(var i=0;i<nodes.length;i++){
                             var node = nodes[i];
@@ -145,6 +159,9 @@
                 }
 
                 jsPlumb.bind("ready", function() {
+                        var root=document.getElementById("root-node");
+                        jsPlumb.addEndpoint(root, sourceOption);
+                        
                         var node=document.getElementsByClassName("dialog-node")[0];
                         augmentDialogNode(node);
                });
