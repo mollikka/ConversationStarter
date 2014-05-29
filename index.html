@@ -92,6 +92,7 @@
                     
                     document.getElementById("dialog-tree").appendChild(node);
                     jsPlumb.addEndpoint(node, targetOption);
+                    var autoresponse = jsPlumb.addEndpoint(node, sourceOption);
                     
                     var addRespBtn = node.getElementsByClassName('add-response-button')[0];
                     var resps = node.getElementsByClassName('responses')[0];
@@ -99,6 +100,7 @@
                         var newResponse = document.createElement("textarea");
                         newResponse.setAttribute("class", "resp-input");
                         resps.appendChild(newResponse);
+                        jsPlumb.deleteEndpoint(autoresponse);
                         jsPlumb.addEndpoint(newResponse,sourceOption);
                         jsPlumb.repaint(node);
                     });
@@ -142,15 +144,19 @@
                             xmlChild("id",nodeXML,i);
                             xmlChild("actor",nodeXML,actorText);
                             xmlChild("line",nodeXML,lineText);
-                            var responsesXML = xmlChild("responses",nodeXML,"");
 
-                            for(var j=0;j<responses.length;j++){
-                                var responseXML = xmlChild("response",responsesXML,"");
-                                var targetId = getTargetId(responses[j],nodes);
-                                xmlChild("target-id",responseXML,targetId);
-                                xmlChild("line",responseXML,responses[j].value);
+                            if (responses.length == 0) {
+                                xmlChild("target-id",nodeXML,getTargetId(node,nodes));
+                            } else {
+                                var responsesXML = xmlChild("responses",nodeXML,"");
+                                    for(var j=0;j<responses.length;j++){
+                                        var responseXML = xmlChild("response",responsesXML,"");
+                                        var targetId = getTargetId(responses[j],nodes);
+                                        xmlChild("target-id",responseXML,targetId);
+                                        xmlChild("line",responseXML,responses[j].value);
+                                    }
+                                }
                             }
-                        }
                         var xmlText = new XMLSerializer().serializeToString(xmldata);
                         var xmlTextNode = document.createTextNode(xmlText);
                         
