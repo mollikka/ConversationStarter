@@ -28,6 +28,10 @@ Implemented in Javascript using [jsPlumb 1.6.2](http://jsplumbtoolkit.com/).
 
 Requires dom.jsPlumb-1.6.2-min.js to run.
 
+## XML Schema
+
+The XML schema is not yet locked down. I'm trying different things to see which document structure works for me. **This means saving/loading between versions may break without notice. Also, using the tool in a project may require some reverse engineering right now.**
+
 ## Purpose of the project
 
 Conversation Starter is developed for my own projects and for the needs of my team. Since the scope of the tool is quite limited and not targeted at a second party, the main requirement is to have something working fast.
