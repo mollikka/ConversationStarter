@@ -13,13 +13,18 @@
                 border-style: solid;
                 border-width: 5px;
             }
-            .dialog-node {
+            .node {
                 width: 200px;
                 padding: 15px;
-                background-color: green;
                 position: absolute;
                 border-style: solid;
                 border-width: 5px;
+            }
+            .dialog-node {
+                background-color: green;
+            }
+            .special-node {
+                background-color: #800000;
             }
             .delete-button {
                 float: right;
@@ -39,6 +44,7 @@
 
         <div id="toolbox">
             <input type="button" value="Add dialog line" onclick="newNode()"></input>
+            <input type="button" value="Add special event" onclick="newSpecialNode()"></input>
             <input type="button" value="Save tree" onclick="saveTree()"></input>
             <a href="https://github.com/mollikka/ConversationStarter/blob/gh-pages/README.md" target="_blank"><input type="button" value="Readme"></input></a>
         </div>
@@ -50,20 +56,26 @@
                 Dialog begins
             </div>
 
-            <div class="dialog-node">
+            <div class="node dialog-node">
                 <input class="delete-button" type="button" value="Del"></input>
                 Actor <input type="text" class="actor-input"></input>
                 says <textarea class="line-input"></textarea>
                 Player responds
                 <input class="add-response-button" type="button" value="Add response"></input>
                 <div class="responses"></div>
-                Special event <input type="text" class="event-input"></input>
             </div>
+
+           <div class="node special-node">
+                <input class="delete-button" type="button" value="Del"></input>
+                Special event <input type="text" class="event-input"></input>
+           </div>
+
         </div>
 
 
         <script>
                 var nodetemplate=document.getElementsByClassName("dialog-node")[0].cloneNode(true);
+                var specialtemplate=document.getElementsByClassName("special-node")[0].cloneNode(true);
 
                 var targetOption = {anchor:"Left",
                                                     maxConnections:-1, 
@@ -84,6 +96,19 @@
 
 
 
+                var augmentSpecialNode = function(node) {
+                    jsPlumb.draggable(node);
+                    document.getElementById("dialog-tree").appendChild(node);
+                    var targetanchor = jsPlumb.addEndpoint(node, targetOption);
+                    var responseanchor = jsPlumb.addEndpoint(node, sourceOption);
+
+                    var deleteBtn = node.getElementsByClassName("delete-button")[0];
+                    deleteBtn.addEventListener("click", function(event) {
+                        jsPlumb.deleteEndpoint(targetanchor);
+                        jsPlumb.deleteEndpoint(responseanchor);
+                        document.getElementById("dialog-tree").removeChild(node);
+                    });
+                }
 
                 var augmentDialogNode = function(node) {
                     jsPlumb.draggable(node);
@@ -122,6 +147,10 @@
                         var node=nodetemplate.cloneNode(true);
                         augmentDialogNode(node);
                 }
+                var newSpecialNode = function() {
+                        var node=specialtemplate.cloneNode(true);
+                        augmentSpecialNode(node);
+                }
 
                 var saveTree = function() {
                 
@@ -142,33 +171,45 @@
                     
                     }
                         var root = document.getElementById('root-node');
-                        var nodes = document.getElementsByClassName('dialog-node');
+                        var nodes = document.getElementsByClassName('node');
+                        var dialognodes = document.getElementsByClassName('dialog-node');
+                        var specialnodes = document.getElementsByClassName('special-node');
+
                         var xmldata = document.createElement("dialog");
                         xmlChild("root",xmldata,getTargetId(root,nodes));
 
                         for(var i=0;i<nodes.length;i++){
                             var node = nodes[i];
-                            var actorText = nodes[i].getElementsByClassName("actor-input")[0].value;
-                            var lineText = nodes[i].getElementsByClassName("line-input")[0].value;
-                            var responses = nodes[i].getElementsByClassName("responses")[0].getElementsByClassName("resp-input");
-                            var eventText = nodes[i].getElementsByClassName("event-input")[0].value;
+                            if (node.classList.contains("special-node")) {
+                                var eventText = node.getElementsByClassName("event-input")[0].value;
 
-
-                            var nodeXML = xmlChild("message",xmldata,"");
-                            xmlChild("id",nodeXML,i);
-                            xmlChild("actor",nodeXML,actorText);
-                            xmlChild("line",nodeXML,lineText);
-                            xmlChild("event",nodeXML,eventText);
-
-                            if (responses.length == 0) {
+                                var nodeXML = xmlChild("event",xmldata,"");
+                                xmlChild("id",nodeXML,i);
+                                xmlChild("event-name",nodeXML,eventText);
                                 xmlChild("target-id",nodeXML,getTargetId(node,nodes));
-                            } else {
-                                var responsesXML = xmlChild("responses",nodeXML,"");
-                                    for(var j=0;j<responses.length;j++){
-                                        var responseXML = xmlChild("response",responsesXML,"");
-                                        var targetId = getTargetId(responses[j],nodes);
-                                        xmlChild("target-id",responseXML,targetId);
-                                        xmlChild("line",responseXML,responses[j].value);
+                            }
+                            if (node.classList.contains("dialog-node")) {
+
+                                var actorText = node.getElementsByClassName("actor-input")[0].value;
+                                var lineText = node.getElementsByClassName("line-input")[0].value;
+                                var responses = node.getElementsByClassName("responses")[0].getElementsByClassName("resp-input");
+
+
+                                var nodeXML = xmlChild("message",xmldata,"");
+                                xmlChild("id",nodeXML,i);
+                                xmlChild("actor",nodeXML,actorText);
+                                xmlChild("line",nodeXML,lineText);
+
+                                if (responses.length == 0) {
+                                    xmlChild("target-id",nodeXML,getTargetId(node,nodes));
+                                } else {
+                                    var responsesXML = xmlChild("responses",nodeXML,"");
+                                        for(var j=0;j<responses.length;j++){
+                                            var responseXML = xmlChild("response",responsesXML,"");
+                                            var targetId = getTargetId(responses[j],nodes);
+                                            xmlChild("target-id",responseXML,targetId);
+                                            xmlChild("line",responseXML,responses[j].value);
+                                        }
                                     }
                                 }
                             }
@@ -189,6 +230,9 @@
                         
                         var node=document.getElementsByClassName("dialog-node")[0];
                         augmentDialogNode(node);
+
+                        var node=document.getElementsByClassName("special-node")[0];
+                        augmentSpecialNode(node);
                });
         </script>
     </body>
