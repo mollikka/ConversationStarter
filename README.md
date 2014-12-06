@@ -30,7 +30,7 @@ Requires dom.jsPlumb-1.6.2-min.js to run.
 
 ## XML Schema
 
-The XML schema is not yet locked down. I'm trying different things to see which document structure works for me. **This means saving/loading between versions may break without notice. Also, using the tool in a project may require some reverse engineering right now.**
+See schema.xsd for the current version.
 
 ## Purpose of the project
 
