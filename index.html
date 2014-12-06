@@ -176,6 +176,7 @@
                         var specialnodes = document.getElementsByClassName('special-node');
 
                         var xmldata = document.createElement("dialog");
+                        xmldata.setAttribute("xmlns","https://mollikka.github.io/ConversationStarter/");
                         xmlChild("root",xmldata,getTargetId(root,nodes));
 
                         for(var i=0;i<nodes.length;i++){
