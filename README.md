@@ -36,4 +36,4 @@ See schema.xsd for the current version.
 
 Conversation Starter is developed for my own projects and for the needs of my team. Since the scope of the tool is quite limited and not targeted at a second party, the main requirement is to have something working fast.
 
-The code is available *as is* on GitHub. Feel free to use output generated using the tool without attribution. If you distribute a version of Conversation Starter, please link back to the [GitHub project page](https://github.com/mollikka/ConversationStarter/).
+Feel free to use output generated using the tool without attribution. See LICENCE for exact rules.
